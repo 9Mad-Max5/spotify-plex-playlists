@@ -8,10 +8,12 @@ import os
 from spotipy.oauth2 import SpotifyClientCredentials
 from typing import List
 
+
 def namesanitize(name):
     name = re.sub('\W+', ' ', name)
     name = name.strip()
     return name
+
 
 def filterPlexArray(plexItems=[], song="", artist="") -> List[Track]:
     for item in list(plexItems):
@@ -94,7 +96,6 @@ def getPlexTracks(plex: PlexServer, spotifyTracks: []) -> List[Track]:
             else:
                 logging.info("Not Found Spotify Song: %s by %s" %
                              (track['name'], track['artists'][0]['name']))
-                plexTracks.append(plexMusic[0])
     return plexTracks
 
 
