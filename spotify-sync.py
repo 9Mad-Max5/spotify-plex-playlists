@@ -13,6 +13,7 @@ def filterPlexArray(plexItems=[], song="", artist="") -> List[Track]:
     for item in list(plexItems):
         item.title = re.sub('\W+', ' ', item.title)
         song = re.sub('\W+', ' ', song)
+        logging.debug("Before Strip Title: %s <-> %s" % (item.title, song))
         item.title.strip()
         song.strip()
         if type(item) is not Track:
