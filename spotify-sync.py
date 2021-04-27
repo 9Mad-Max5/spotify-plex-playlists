@@ -7,8 +7,6 @@ import spotipy
 import os
 from spotipy.oauth2 import SpotifyClientCredentials
 from typing import List
-from RSScrawler.rsscrawler.common import sanitize
-from DeezloaderAn0n_bot.settings import default_time
 
 def namesanitize(name):
     name = re.sub('\W+', ' ', name)
