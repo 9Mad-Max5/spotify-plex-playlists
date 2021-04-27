@@ -15,10 +15,12 @@ def filterPlexArray(plexItems=[], song="", artist="") -> List[Track]:
             plexItems.remove(item)
             continue
         if item.title.lower() != song.lower():
+            logging.debug("Comparing: %s by %s" % (item.title, song))
             plexItems.remove(item)
             continue
         artistItem = item.artist()
         if artistItem.title.lower() != artist.lower():
+            logging.debug("Comparing: %s by %s" % (artistItem.title, artist))
             plexItems.remove(item)
             continue
 
@@ -38,7 +40,8 @@ def getSpotifyUserPlaylists(sp: spotipy.client, userId: str) -> []:
         playlistItems = playlists['items']
         for i, playlist in enumerate(playlistItems):
             if playlist['owner']['id'] == userId:
-                spotifyPlaylists.append(getSpotifyPlaylist(sp, userId, playlist['id']))
+                spotifyPlaylists.append(
+                    getSpotifyPlaylist(sp, userId, playlist['id']))
         if playlists['next']:
             playlists = sp.next(playlists)
         else:
@@ -60,7 +63,8 @@ def getPlexTracks(plex: PlexServer, spotifyTracks: []) -> List[Track]:
     plexTracks = []
     for spotifyTrack in spotifyTracks:
         track = spotifyTrack['track']
-        logging.info("Searching Plex for: %s by %s" % (track['name'], track['artists'][0]['name']))
+        logging.info("Searching Plex for: %s by %s" %
+                     (track['name'], track['artists'][0]['name']))
 
         try:
             musicTracks = plex.search(track['name'], mediatype='track')
@@ -72,9 +76,11 @@ def getPlexTracks(plex: PlexServer, spotifyTracks: []) -> List[Track]:
                 continue
 
         if len(musicTracks) > 0:
-            plexMusic = filterPlexArray(musicTracks, track['name'], track['artists'][0]['name'])
+            plexMusic = filterPlexArray(
+                musicTracks, track['name'], track['artists'][0]['name'])
             if len(plexMusic) > 0:
-                logging.info("Found Plex Song: %s by %s" % (track['name'], track['artists'][0]['name']))
+                logging.info("Found Plex Song: %s by %s" %
+                             (track['name'], track['artists'][0]['name']))
                 plexTracks.append(plexMusic[0])
     return plexTracks
 
@@ -92,6 +98,7 @@ def createPlaylist(plex: PlexServer, sp: spotipy.Spotify, playlist: []):
             logging.info("Creating playlist %s" % playlistName)
             plex.createPlaylist(playlistName, plexTracks)
 
+
 def parseSpotifyURI(uriString: str) -> {}:
     spotifyUriStrings = re.sub(r'^spotify:', '', uriString).split(":")
     spotifyUriParts = {}
@@ -102,24 +109,28 @@ def parseSpotifyURI(uriString: str) -> {}:
     return spotifyUriParts
 
 
-def runSync(plex : PlexServer, sp : spotipy.Spotify, spotifyURIs: []):
+def runSync(plex: PlexServer, sp: spotipy.Spotify, spotifyURIs: []):
     logging.info('Starting a Sync Operation')
     playlists = []
 
     for spotifyUriParts in spotifyURIs:
         if 'user' in spotifyUriParts.keys() and 'playlist' not in spotifyUriParts.keys():
             logging.info('Getting playlists for %s' % spotifyUriParts['user'])
-            playlists.extend(getSpotifyUserPlaylists(sp, spotifyUriParts['user']))
+            playlists.extend(getSpotifyUserPlaylists(
+                sp, spotifyUriParts['user']))
         elif 'user' in spotifyUriParts.keys() and 'playlist' in spotifyUriParts.keys():
-            logging.info('Getting playlist %s from user %s' % (spotifyUriParts['user'], spotifyUriParts['playlist']))
-            playlists.append(getSpotifyPlaylist(sp, spotifyUriParts['user'], spotifyUriParts['playlist']))
+            logging.info('Getting playlist %s from user %s' %
+                         (spotifyUriParts['playlist'], spotifyUriParts['user']))
+            playlists.append(getSpotifyPlaylist(
+                sp, spotifyUriParts['user'], spotifyUriParts['playlist']))
 
     for playlist in playlists:
         createPlaylist(plex, sp, playlist)
     logging.info('Finished a Sync Operation')
 
+
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     spotifyUris = os.environ.get('SPOTIFY_URIS')
 
     if spotifyUris is None:
@@ -134,7 +145,6 @@ if __name__ == '__main__':
     sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
     spotifyUris = spotifyUris.split(",")
-
 
     spotifyMainUris = []
 

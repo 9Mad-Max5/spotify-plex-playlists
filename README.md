@@ -16,7 +16,8 @@ Set the following Docker environment variables
 
 `PLEX_TOKEN` - Your plex token found by https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
 
-`SPOTIFY_URIS` - A comma seperated list of the spotify URI's you would like to import: `spotify:user:sonosplay,spotify:user:sonosplay:playlist:6nQjiSQhdf84s2AAxweRBv`. The username must be added manually. As Spotify desktop not provides them from copying.
+`SPOTIFY_URIS` - A comma seperated list of the spotify URI's you would like to import: `spotify:user:sonosplay,spotify:user:sonosplay:playlist:6nQjiSQhdf84s2AAxweRBv`\\
+The username must be added manually. As Spotify desktop not provides them from copying.
 
 `SECONDS_TO_WAIT` - How many seconds to wait before syncs
 
