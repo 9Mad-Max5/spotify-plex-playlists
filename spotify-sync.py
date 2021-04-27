@@ -27,7 +27,7 @@ def filterPlexArray(plexItems=[], song="", artist="") -> List[Track]:
         artistItem = item.artist()
         artistItem.title = namesanitize(artistItem.title)
         artist = namesanitize(artist)
-        if not artist.lower() in artistItem.title.lower() != artist.lower():
+        if not artist.lower() in artistItem.title.lower():
             logging.debug("Comparing Artist: %s <-> %s" %
                           (artistItem.title, artist))
             plexItems.remove(item)
