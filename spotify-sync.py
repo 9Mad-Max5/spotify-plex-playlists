@@ -7,15 +7,18 @@ import spotipy
 import os
 from spotipy.oauth2 import SpotifyClientCredentials
 from typing import List
+from RSScrawler.rsscrawler.common import sanitize
+from DeezloaderAn0n_bot.settings import default_time
 
+def namesanitize(name):
+    name = re.sub('\W+', ' ', name)
+    name = name.strip()
+    return name
 
 def filterPlexArray(plexItems=[], song="", artist="") -> List[Track]:
     for item in list(plexItems):
-        item.title = re.sub('\W+', ' ', item.title)
-        song = re.sub('\W+', ' ', song)
-        logging.debug("Before Strip Title: %s <-> %s" % (item.title, song))
-        item.title.strip()
-        song.strip()
+        item.title = namesanitize(item.title)
+        song = namesanitize(song)
         if type(item) is not Track:
             plexItems.remove(item)
             continue
@@ -24,10 +27,8 @@ def filterPlexArray(plexItems=[], song="", artist="") -> List[Track]:
             plexItems.remove(item)
             continue
         artistItem = item.artist()
-        artistItem.title = re.sub('\W+', ' ', artistItem.title)
-        artistItem.title.strip()
-        artist = re.sub('\W+', ' ', artist)
-        artist.strip()
+        artistItem.title = namesanitize(artistItem.title)
+        artist = namesanitize(artist)
         if artistItem.title.lower() != artist.lower():
             logging.debug("Comparing Artist: %s <-> %s" %
                           (artistItem.title, artist))
