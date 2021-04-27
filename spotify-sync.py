@@ -145,8 +145,8 @@ def runSync(plex: PlexServer, sp: spotipy.Spotify, spotifyURIs: []):
 
 if __name__ == '__main__':
     loglevel = os.environ.get('LOGLEVEL')
-    logging.info('%s' % loglevel)
-    logging.basicConfig(loglevel)
+    logging.info('Log-Level %s' % loglevel)
+    logging.basicConfig(level=logging.INFO)
     spotifyUris = os.environ.get('SPOTIFY_URIS')
 
     if spotifyUris is None:
