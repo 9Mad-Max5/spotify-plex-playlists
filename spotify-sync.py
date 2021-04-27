@@ -11,8 +11,10 @@ from typing import List
 
 def filterPlexArray(plexItems=[], song="", artist="") -> List[Track]:
     for item in list(plexItems):
-        item.title = re.sub('\W+',' ', item.title)
-        song = re.sub('\W+',' ', song)
+        item.title = re.sub('\W+', ' ', item.title)
+        song = re.sub('\W+', ' ', song)
+        item.title.strip()
+        song.strip()
         if type(item) is not Track:
             plexItems.remove(item)
             continue
@@ -21,10 +23,13 @@ def filterPlexArray(plexItems=[], song="", artist="") -> List[Track]:
             plexItems.remove(item)
             continue
         artistItem = item.artist()
-        artistItem.title = re.sub('\W+',' ', artistItem.title)
-        artist = re.sub('\W+',' ', artist)
+        artistItem.title = re.sub('\W+', ' ', artistItem.title)
+        artistItem.title.strip()
+        artist = re.sub('\W+', ' ', artist)
+        artist.strip()
         if artistItem.title.lower() != artist.lower():
-            logging.debug("Comparing Artist: %s <-> %s" % (artistItem.title, artist))
+            logging.debug("Comparing Artist: %s <-> %s" %
+                          (artistItem.title, artist))
             plexItems.remove(item)
             continue
 
