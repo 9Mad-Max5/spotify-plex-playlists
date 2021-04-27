@@ -94,7 +94,7 @@ def getPlexTracks(plex: PlexServer, spotifyTracks: []) -> List[Track]:
                              (track['name'], track['artists'][0]['name']))
                 plexTracks.append(plexMusic[0])
             else:
-                logging.info("Not Found Spotify Song: %s by %s" %
+                logging.info("Couldn't find Spotify Song: %s by %s" %
                              (track['name'], track['artists'][0]['name']))
     return plexTracks
 
