@@ -15,12 +15,12 @@ def filterPlexArray(plexItems=[], song="", artist="") -> List[Track]:
             plexItems.remove(item)
             continue
         if item.title.lower() != song.lower():
-            logging.debug("Comparing: %s <-> %s" % (item.title, song))
+            logging.debug("Comparing Title: %s <-> %s" % (item.title, song))
             plexItems.remove(item)
             continue
         artistItem = item.artist()
         if artistItem.title.lower() != artist.lower():
-            logging.debug("Comparing: %s <-> %s" % (artistItem.title, artist))
+            logging.debug("Comparing Artist: %s <-> %s" % (artistItem.title, artist))
             plexItems.remove(item)
             continue
 
