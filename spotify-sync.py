@@ -5,6 +5,7 @@ from plexapi.server import PlexServer
 from plexapi.audio import Track
 import spotipy
 import os
+import sys
 from spotipy.oauth2 import SpotifyClientCredentials
 from typing import List
 
@@ -74,8 +75,8 @@ def getPlexTracks(plex: PlexServer, spotifyTracks: []) -> List[Track]:
     plexTracks = []
     for spotifyTrack in spotifyTracks:
         track = spotifyTrack['track']
-        logging.info("Searching Plex for: %s by %s" %
-                     (track['name'], track['artists'][0]['name']))
+        logging.debug("Searching Plex for: %s by %s" %
+                      (track['name'], track['artists'][0]['name']))
 
         try:
             musicTracks = plex.search(track['name'], mediatype='track')
@@ -83,15 +84,15 @@ def getPlexTracks(plex: PlexServer, spotifyTracks: []) -> List[Track]:
             try:
                 musicTracks = plex.search(track['name'], mediatype='track')
             except:
-                logging.info("Issue making plex request")
+                logging.error("Issue making plex request")
                 continue
 
         if len(musicTracks) > 0:
             plexMusic = filterPlexArray(
                 musicTracks, track['name'], track['artists'][0]['name'])
             if len(plexMusic) > 0:
-                logging.info("Found Plex Song: %s by %s" %
-                             (track['name'], track['artists'][0]['name']))
+                logging.debug("Found Plex Song: %s by %s" %
+                              (track['name'], track['artists'][0]['name']))
                 plexTracks.append(plexMusic[0])
             else:
                 logging.info("Couldn't find Spotify Song: %s by %s" %
@@ -144,13 +145,20 @@ def runSync(plex: PlexServer, sp: spotipy.Spotify, spotifyURIs: []):
 
 
 if __name__ == '__main__':
-    loglevel = os.environ.get('LOGLEVEL')
-    #logging.info('Log-Level %s' % loglevel)
-    logging.basicConfig(level=logging.INFO)
+    loglevel = os.environ.get('LOGLEVEL').upper()
+    logging.basicConfig(
+        level=loglevel,
+        format="%(asctime)s [%(levelname)s] %(message)s",
+        handlers=[
+            logging.FileHandler("/log/sync-log.log"),
+            logging.StreamHandler(sys.stdout)
+        ]
+    )
+
     spotifyUris = os.environ.get('SPOTIFY_URIS')
 
     if spotifyUris is None:
-        logging.error("No spotify uris")
+        logging.error("No spotify uris!")
 
     secondsToWait = int(os.environ.get('SECONDS_TO_WAIT', 1800))
     baseurl = os.environ.get('PLEX_URL')
