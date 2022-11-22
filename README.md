@@ -1,6 +1,6 @@
 Spotify -> Plex
 -
-[![](https://img.shields.io/docker/automated/bassrock/spotify-plex-playlists.svg)](https://cloud.docker.com/repository/docker/bassrock/spotify-plex-playlists) [![](https://img.shields.io/docker/pulls/bassrock/spotify-plex-playlists.svg)](https://img.shields.io/docker/pulls/bassrock/spotify-plex-playlists.svg) [![](https://img.shields.io/docker/stars/bassrock/spotify-plex-playlists.svg)](https://cloud.docker.com/repository/docker/bassrock/spotify-plex-playlists)
+[![](https://img.shields.io/docker/9Mad-Max5/bassrock/spotify-plex-playlists.svg)](https://img.shields.io/docker/pulls/bassrock/spotify-plex-playlists.svg) [![](https://img.shields.io/docker/stars/9Mad-Max5/spotify-plex-playlists.svg)](https://cloud.docker.com/repository/docker/bassrock/spotify-plex-playlists)
 
 Converts Spotify URI's to Plex Playlists on a Specified Interval.
 
@@ -16,7 +16,8 @@ Set the following Docker environment variables
 
 `PLEX_TOKEN` - Your plex token found by https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/
 
-`SPOTIFY_URIS` - A comma seperated list of the spotify URI's you would like to import: `spotify:user:sonosplay,spotify:user:sonosplay:playlist:6nQjiSQhdf84s2AAxweRBv`
+`SPOTIFY_URIS` - A comma seperated list of the spotify URI's you would like to import: `spotify:user:sonosplay,spotify:user:sonosplay:playlist:6nQjiSQhdf84s2AAxweRBv`\\
+The username must be added manually. As Spotify desktop not provides them from copying.
 
 `SECONDS_TO_WAIT` - How many seconds to wait before syncs
 

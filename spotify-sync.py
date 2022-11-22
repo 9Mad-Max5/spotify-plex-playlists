@@ -5,16 +5,26 @@ from plexapi.server import PlexServer
 from plexapi.audio import Track
 import spotipy
 import os
+import sys
 from spotipy.oauth2 import SpotifyClientCredentials
 from typing import List
 
 
+def namesanitize(name):
+    name = re.sub('\W+', ' ', name)
+    name = name.strip()
+    return name
+
+
 def filterPlexArray(plexItems=[], song="", artist="") -> List[Track]:
     for item in list(plexItems):
+        item.title = namesanitize(item.title)
+        song = namesanitize(song)
         if type(item) is not Track:
             plexItems.remove(item)
             continue
-        if item.title.lower() != song.lower():
+        if not song.lower() in item.title.lower():
+            logging.debug("Comparing Title: %s <-> %s" % (item.title, song))
             plexItems.remove(item)
             continue
         artistItem = item.artist()
@@ -38,7 +48,8 @@ def getSpotifyUserPlaylists(sp: spotipy.client, userId: str) -> []:
         playlistItems = playlists['items']
         for i, playlist in enumerate(playlistItems):
             if playlist['owner']['id'] == userId:
-                spotifyPlaylists.append(getSpotifyPlaylist(sp, userId, playlist['id']))
+                spotifyPlaylists.append(
+                    getSpotifyPlaylist(sp, userId, playlist['id']))
         if playlists['next']:
             playlists = sp.next(playlists)
         else:
@@ -105,6 +116,7 @@ def createPlaylist(plex: PlexServer, sp: spotipy.Spotify, playlist: []):
             logging.info("Creating playlist %s" % playlistName)
             plex.createPlaylist(playlistName, plexTracks)
 
+
 def parseSpotifyURI(uriString: str) -> {}:
     spotifyUriStrings = re.sub(r'^spotify:', '', uriString).split(":")
     spotifyUriParts = {}
@@ -115,28 +127,41 @@ def parseSpotifyURI(uriString: str) -> {}:
     return spotifyUriParts
 
 
-def runSync(plex : PlexServer, sp : spotipy.Spotify, spotifyURIs: []):
+def runSync(plex: PlexServer, sp: spotipy.Spotify, spotifyURIs: []):
     logging.info('Starting a Sync Operation')
     playlists = []
 
     for spotifyUriParts in spotifyURIs:
         if 'user' in spotifyUriParts.keys() and 'playlist' not in spotifyUriParts.keys():
             logging.info('Getting playlists for %s' % spotifyUriParts['user'])
-            playlists.extend(getSpotifyUserPlaylists(sp, spotifyUriParts['user']))
+            playlists.extend(getSpotifyUserPlaylists(
+                sp, spotifyUriParts['user']))
         elif 'user' in spotifyUriParts.keys() and 'playlist' in spotifyUriParts.keys():
-            logging.info('Getting playlist %s from user %s' % (spotifyUriParts['user'], spotifyUriParts['playlist']))
-            playlists.append(getSpotifyPlaylist(sp, spotifyUriParts['user'], spotifyUriParts['playlist']))
+            logging.info('Getting playlist %s from user %s' %
+                         (spotifyUriParts['playlist'], spotifyUriParts['user']))
+            playlists.append(getSpotifyPlaylist(
+                sp, spotifyUriParts['user'], spotifyUriParts['playlist']))
 
     for playlist in playlists:
         createPlaylist(plex, sp, playlist)
     logging.info('Finished a Sync Operation')
 
+
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    loglevel = os.environ.get('LOGLEVEL').upper()
+    logging.basicConfig(
+        level=loglevel,
+        format="%(asctime)s [%(levelname)s] %(message)s",
+        handlers=[
+            logging.FileHandler("/log/sync-log.log"),
+            logging.StreamHandler(sys.stdout)
+        ]
+    )
+
     spotifyUris = os.environ.get('SPOTIFY_URIS')
 
     if spotifyUris is None:
-        logging.error("No spotify uris")
+        logging.error("No spotify uris!")
 
     secondsToWait = int(os.environ.get('SECONDS_TO_WAIT', 1800))
     baseurl = os.environ.get('PLEX_URL')
@@ -147,7 +172,6 @@ if __name__ == '__main__':
     sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
     spotifyUris = spotifyUris.split(",")
-
 
     spotifyMainUris = []
 
