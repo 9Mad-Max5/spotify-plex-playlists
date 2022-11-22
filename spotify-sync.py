@@ -176,8 +176,11 @@ if __name__ == '__main__':
     spotifyMainUris = []
 
     while True:
-        with open(urifile,'r') as f:
-            spotifyUris = f.readlines()
+        try:
+            with open(urifile,'r') as f:
+                spotifyUris = f.readlines()
+        except:
+            print("Please create a spotifyuris.txt in the /config folder.")
 
         if spotifyUris is None:
             logging.error("No spotify uris!")

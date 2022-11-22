@@ -16,7 +16,7 @@ WORKDIR /app/
 
 COPY spotify-sync.py /app/spotify-sync.py
 COPY requirements.txt /app/requirements.txt
-ADD spotifyuris.txt /config/
+#ADD spotifyuris.txt /config/
 
 RUN pip install -r requirements.txt
 
