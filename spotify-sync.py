@@ -96,7 +96,7 @@ def getPlexTracks(plex: PlexServer, spotifyTracks) -> List[Track]:
                     except:
                         logging.error("Issue making plex request")
                         break
-                    
+
                 if len(musicTracks) > 0:
                     plexMusic = filterPlexArray(musicTracks, track_name, artist['name'])
                     if len(plexMusic) > 0:
@@ -122,7 +122,7 @@ def createPlaylist(plex: PlexServer, sp: spotipy.Spotify, playlist):
             plexPlaylist.addItems(plexTracks)
         except:
             logging.info("Creating playlist %s" % playlistName)
-            plex.createPlaylist(playlistName, plexTracks)
+            plex.createPlaylist(playlistName, items=plexTracks)
 
 
 def parseSpotifyURI(uriString: str) -> "{}":
@@ -192,8 +192,9 @@ if __name__ == '__main__':
             if "\n"  in spotifyUri:
                 spotifyUri = spotifyUri[:-1]
             
-            spotifyUriParts = parseSpotifyURI(spotifyUri)
-            spotifyMainUris.append(spotifyUriParts)
+            if "spotify:user" in spotifyUri:
+                spotifyUriParts = parseSpotifyURI(spotifyUri)
+                spotifyMainUris.append(spotifyUriParts)
 
         runSync(plex, sp, spotifyMainUris)
         time.sleep(secondsToWait)
