@@ -29,6 +29,8 @@ def filterPlexArray(plexItems=[], song="", artist="") -> List[Track]:
             continue
         artistItem = item.artist()
         if str(item.originalTitle).lower() != artist.lower() and artistItem.title.lower() != artist.lower():
+            logging.debug("Comparing Artist: %s <-> %s" %
+                          (artistItem.title, artist))
             plexItems.remove(item)
             continue
 
@@ -72,6 +74,8 @@ def getPlexTracks(plex: PlexServer, spotifyTracks: []) -> List[Track]:
     for spotifyTrack in spotifyTracks:
         track = spotifyTrack['track']
         track_options = [track['name']]
+        logging.debug("Searching Plex for: %s by %s" %
+                      (track['name'], track['artists'][0]['name']))
         
         # Parse remixes properly
         mix_search = re.search('(.*) - (.*Remix|.*Mix)', track_options[0], re.IGNORECASE)
@@ -91,14 +95,17 @@ def getPlexTracks(plex: PlexServer, spotifyTracks: []) -> List[Track]:
                     try:
                         musicTracks = plex.search(track_name, mediatype='track')
                     except:
-                        logging.info("Issue making plex request")
+                        logging.error("Issue making plex request")
                         break
                 if len(musicTracks) > 0:
                     plexMusic = filterPlexArray(musicTracks, track_name, artist['name'])
                     if len(plexMusic) > 0:
-                        logging.info("Found Plex Song: %s by %s" % (track_name, artist['name']))
+                        logging.debug("Found Plex Song: %s by %s" % (track_name, artist['name']))
                         plexTracks.append(plexMusic[0])
                         break
+                    else:
+                        logging.info("Couldn't find Spotify Song: %s by %s" %
+                             (track['name'], track['artists'][0]['name']))
                     
     return plexTracks
 
