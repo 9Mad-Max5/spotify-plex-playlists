@@ -74,8 +74,6 @@ def getPlexTracks(plex: PlexServer, spotifyTracks: []) -> List[Track]:
     for spotifyTrack in spotifyTracks:
         track = spotifyTrack['track']
         track_options = [track['name']]
-        logging.debug("Searching Plex for: %s by %s" %
-                      (track['name'], track['artists'][0]['name']))
         
         # Parse remixes properly
         mix_search = re.search('(.*) - (.*Remix|.*Mix)', track_options[0], re.IGNORECASE)
@@ -85,7 +83,7 @@ def getPlexTracks(plex: PlexServer, spotifyTracks: []) -> List[Track]:
             if mix_search.group(2) == "Original Mix":
                 track_options.append(mix_search.group(1))
 
-        logging.info("Searching Plex for: %s by %s" % (track_options[0], track['artists'][0]['name']))
+        logging.debug("Searching Plex for: %s by %s" % (track_options[0], track['artists'][0]['name']))
 
         for track_name in track_options:
             for artist in track['artists']:
