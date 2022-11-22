@@ -104,9 +104,9 @@ def getPlexTracks(plex: PlexServer, spotifyTracks) -> List[Track]:
                         plexTracks.append(plexMusic[0])
                         break
 
-                else:
-                    logging.info("Couldn't find Spotify Song: %s by %s" %
-                            (track['name'], track['artists'][0]['name']))
+                    else:
+                        logging.info("Couldn't find Spotify Song: %s by %s" %
+                                (track['name'], track['artists'][0]['name']))
                 
     return plexTracks
 
@@ -152,7 +152,7 @@ def runSync(plex: PlexServer, sp: spotipy.Spotify, spotifyURIs):
 
     for playlist in playlists:
         createPlaylist(plex, sp, playlist)
-    logging.info('Finished a Sync Operation')
+    logging.info('Finished all Sync Operation')
 
 
 if __name__ == '__main__':
